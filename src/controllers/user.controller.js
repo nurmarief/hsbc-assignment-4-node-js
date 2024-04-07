@@ -6,12 +6,6 @@ const jwt = require('jsonwebtoken')
 const register = async (req, res) => {
 	const {firstName, lastName, userName, email, password} = req.body
 
-	if (!userName || !userName || !email || !password) {
-		return res.status(400).send({
-			message: "Register failed, field must not empty"
-		})
-	}
-
 	/* const regis = await knex('users').insert({
 		firstName: firstName,
 		lastName: lastName,
@@ -43,24 +37,9 @@ const allUsers = async (req, res) => {
 }
 
 const login = async (req, res) => {
-	const {userName, password} = req.body
+	const data = req.userInfo
 
-	const getUser = await user.findOne({where: {userName: userName}})
-
-	if (!getUser) {
-		return res.status(400).send({
-			message: 'Error, user not found'
-		})
-	}
-
-	const comparedPassword = bcrypt.compareSync(password, getUser.dataValues.password)
-	if(!comparedPassword) {
-		return res.status(400).send({
-			message: "Error, incorrect password"
-		})
-	}
-
-	const token = jwt.sign({id: getUser.dataValues.id, userName: getUser.dataValues.userName}, process.env.JWT_SECRET, {expiresIn: 60})
+	const token = jwt.sign({id: data.id, userName: data.userName}, process.env.JWT_SECRET, {expiresIn: 3600})
 
 	return res.status(200).send({
 		message: "Login Success",
@@ -68,5 +47,14 @@ const login = async (req, res) => {
 	})
 }
 
-module.exports = {register, allUsers, login}
+const addProfile = async (req, res, next) => {
+	const userData = req.user
+	const file = req.file
+
+	const updateProfileField = await user.update({picture: file.path}, {where: {id: userData.id}})
+	return res.status(201).send({
+		message: "upload success"
+	})
+}
+module.exports = {register, allUsers, login, addProfile}
 

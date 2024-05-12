@@ -1,53 +1,62 @@
-const knex = require('../knexmodels/knex')
 const bcrypt = require('bcrypt')
 const {user} = require('../models')
 const jwt = require('jsonwebtoken')
 
-const register = async (req, res) => {
-	const {firstName, lastName, userName, email, password} = req.body
+module.exports.postRegister = async (req, res, next) => {
+	try {
+		const {firstName, lastName, userName, email, password} = req.body
+	
+		const hashPassword = bcrypt.hashSync(password, 8)
 
-	/* const regis = await knex('users').insert({
-		firstName: firstName,
-		lastName: lastName,
-		userName: userName,
-		email: email,
-		password: password,
-	}) */
-	const hashPassword = bcrypt.hashSync(password, 8)
-	const regis = await user.create({
-		firstName: firstName,
-		lastName: lastName,
-		userName: userName,
-		email: email,
-		password: hashPassword,
-	})
+		await user.create({
+			firstName: firstName,
+			lastName: lastName,
+			userName: userName,
+			email: email,
+			password: hashPassword,
+		})
+	
+		return res.status(201).send({
+			message: `success, user with username ${userName} was created`
+		})
 
-	return res.status(201).send({
-		message: "Create user succes"
-	})
+	} catch (error) {
+		next(error)
+	}
 }
 
-const allUsers = async (req, res) => {
-	const all = await knex.select().from('users')
+module.exports.getAll = async (req, res) => {
+	try {
+		const data = await user.findAll();
+	
+		return res.status(200).send({
+			message: "success",
+			data
+		})
 
-	return res.status(200).send({
-		message: "All user data retrieved",
-		data: all
-	})
+	} catch (error) {
+		next(error)
+	}
 }
 
-const login = async (req, res) => {
-	const data = req.userInfo
+module.exports.postLogin = async (req, res, next) => {
+	try {
+		const data = req.userInfo
+	
+		const token = jwt.sign({id: data.id, userName: data.userName}, process.env.JWT_SECRET, {expiresIn: 3600})
+	
+		return res.status(200).cookie('token', token, {
+			httpOnly: true
+		}).send({
+			message: 'success',
+		})
 
-	const token = jwt.sign({id: data.id, userName: data.userName}, process.env.JWT_SECRET, {expiresIn: 3600})
-
-	return res.status(200).send({
-		message: "Login Success",
-		data: token
-	})
+	} catch (error) {
+		next(error)	
+	}
 }
 
-const addProfile = async (req, res, next) => {
+module.exports.addProfile = async (req, res, next) => {
 	const userData = req.user
 	const file = req.file
 
@@ -56,5 +65,3 @@ const addProfile = async (req, res, next) => {
 		message: "upload success"
 	})
 }
-module.exports = {register, allUsers, login, addProfile}
-

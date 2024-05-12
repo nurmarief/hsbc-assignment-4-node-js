@@ -11,6 +11,7 @@ const verify = async (req, res, next) => {
 			})
 		}
 
+		// Splitting 'Bearer tokenstring' to ['Bearer', 'tokenstring']
 		const checkToken = jwt.verify(token.split(" ")[1], process.env.JWT_SECRET)
 		if (!checkToken) {
 			return res.status(403).send({
@@ -22,9 +23,7 @@ const verify = async (req, res, next) => {
 
 		next()
 	} catch (error) {
-		return res.status(403).send({
-			message: error
-		})
+		next(error)
 	}
 }
 

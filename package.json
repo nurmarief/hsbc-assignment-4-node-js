@@ -1,15 +1,14 @@
 {
-  "name": "myproject2",
+  "name": "hsbc-assignment-4-node-js",
   "version": "1.0.0",
-  "description": "Sebuah project generate express menggunakan library",
+  "description": "An HSBC individual assignment to develop RESTful API with nodejs (expressjs) and mysql (sequelize)",
   "main": "src/index.js",
   "scripts": {
     "start": "nodemon src/index.js",
     "build": "node src/index.js",
-    "migrate": "knex migrate:latest --knexfile src/knexmodels/knexfile.js",
-    "migrate:down": "knex migrate:down --knexfile src/knexmodels/knexfile.js"
+    "migrate": "sequelize db:migrate"
   },
-  "author": "Faizul Fuadi",
+  "author": "Nur Muhammad Arief Kurniawan<ariefmuhammad8987@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "eslint": "latest",
@@ -26,7 +25,6 @@
     "dotenv": "latest",
     "express": "latest",
     "jsonwebtoken": "^9.0.2",
-    "knex": "^3.1.0",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.9.3",
     "sequelize": "^6.6.5",

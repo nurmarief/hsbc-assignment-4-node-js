@@ -1,3 +1,5 @@
-exports.helloWorld = (req, res, next) => {
-    res.send('<h1>Hello Faizul!</h1>');
+module.exports.getRoot = (req, res, next) => {
+    res.status(200).json({
+        message: 'success'
+    });
 };

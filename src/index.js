@@ -4,7 +4,8 @@ const cors = require('cors');
 const {sequelize} = require('./models')
 
 const router = require('./routes/router');
-const userRoute = require('./routes/user.route')
+const userRoute = require('./routes/user.route');
+const processError = require('./middlewares/processError');
 
 const app = express();
 
@@ -21,5 +22,7 @@ sequelize.authenticate().then((error) => {
 
 app.use('/', router);
 app.use('/user', userRoute);
+
+app.use(processError);
 
 app.listen(process.env.SERVER_PORT, () => {console.log('Server Running')});

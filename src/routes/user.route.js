@@ -1,5 +1,5 @@
 const express = require('express');
-const {register, allUsers, login, addProfile, } = require('../controllers/user.controller');
+const userController = require('../controllers/user.controller');
 const { verify } = require('../middlewares/verifytoken');
 const { regisValidator, loginValidator } = require('../middlewares/validator');
 const {upload} = require('../middlewares/upload');
@@ -7,9 +7,9 @@ const {upload} = require('../middlewares/upload');
 
 const router = express.Router();
 
-router.post('/register', regisValidator, register);
-router.get('/all', verify, allUsers)
-router.post('/login', loginValidator, login)
-router.post('/uploadprofile', verify, upload.single('file'), addProfile)
+router.get('/', verify, userController.getAll)
+router.post('/register', regisValidator, userController.postRegister);
+router.post('/login', loginValidator, userController.postLogin)
+router.post('/uploadprofile', verify, upload.single('file'), userController.addProfile)
 
 module.exports = router;

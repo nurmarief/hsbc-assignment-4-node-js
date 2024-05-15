@@ -5,6 +5,8 @@ const {sequelize} = require('./models')
 
 const router = require('./routes/router');
 const userRoute = require('./routes/user.route');
+const postRoute = require('./routes/post.route');
+const commentRoute = require('./routes/comment.route');
 const processError = require('./middlewares/processError');
 
 const app = express();
@@ -21,7 +23,9 @@ sequelize.authenticate().then((error) => {
 })
 
 app.use('/', router);
-app.use('/user', userRoute);
+app.use('/users', userRoute);
+app.use('/posts', postRoute);
+app.use('/comments', commentRoute);
 
 app.use(processError);
 
